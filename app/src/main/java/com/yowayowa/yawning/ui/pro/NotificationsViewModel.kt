@@ -1,4 +1,4 @@
-package com.yowayowa.yawning.ui.notifications
+package com.yowayowa.yawning.ui.pro
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -13,13 +13,13 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.yowayowa.yawning.ui.dashboard.DashboardFragment"
+        android:name="com.yowayowa.yawning.ui.ranking.DashboardFragment"
         android:label="@string/title_ranking"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.yowayowa.yawning.ui.notifications.NotificationsFragment"
+        android:name="com.yowayowa.yawning.ui.pro.NotificationsFragment"
         android:label="@string/title_pro"
         tools:layout="@layout/fragment_notifications" />
 </navigation>

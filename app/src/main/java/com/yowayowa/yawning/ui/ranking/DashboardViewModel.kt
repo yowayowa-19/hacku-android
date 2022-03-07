@@ -1,4 +1,4 @@
-package com.yowayowa.yawning.ui.dashboard
+package com.yowayowa.yawning.ui.ranking
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
