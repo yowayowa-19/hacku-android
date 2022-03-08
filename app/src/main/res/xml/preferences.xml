@@ -34,7 +34,7 @@
             app:iconSpaceReserved="false" >
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="http://www.google.com" />
+                android:data="https://github.com/yowayowa-19" />
         </PreferenceScreen>
     </PreferenceCategory>
 
