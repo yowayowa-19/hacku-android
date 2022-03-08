@@ -1,6 +1,8 @@
 package com.yowayowa.yawning
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -31,7 +33,13 @@ class MainActivity : AppCompatActivity() {
             )
         )
         binding.toolbar.setupWithNavController(navController,appBarConfiguration)
-
+        binding.toolbar.inflateMenu(R.menu.top_nav_menu)
+        binding.toolbar.setOnMenuItemClickListener{
+            when(it.itemId){
+                R.id.navigation_settings -> println("R.id.navigation_settings was clicked.")
+            }
+            true
+        }
         navView.setupWithNavController(navController)
     }
 }
