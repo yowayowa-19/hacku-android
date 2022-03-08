@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.yowayowa.yawning.ui.pro.NotificationsFragment"
+        android:name="com.yowayowa.yawning.ui.pro.ProFragment"
         android:label="@string/title_pro"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_pro" />
 </navigation>
