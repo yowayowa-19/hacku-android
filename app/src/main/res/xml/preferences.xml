@@ -23,6 +23,7 @@
     <PreferenceCategory android:title="このアプリについて"
         app:iconSpaceReserved="false">
         <PreferenceScreen
+            android:key="version"
             android:title="バージョン"
             tools:summary="1.0.0.0"
             app:iconSpaceReserved="false" />
