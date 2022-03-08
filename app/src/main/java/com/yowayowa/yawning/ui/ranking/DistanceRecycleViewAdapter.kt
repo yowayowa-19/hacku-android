@@ -4,9 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.yowayowa.yawning.ComboRanking
+import com.yowayowa.yawning.DistanceRanking
 import com.yowayowa.yawning.R
 
-class ComboRecycleViewAdapter(list: List<ComboRanking>) : RecyclerView.Adapter<RankingViewHolder>() {
+class DistanceRecycleViewAdapter(list: List<DistanceRanking>) : RecyclerView.Adapter<RankingViewHolder>() {
     private val list  = list
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RankingViewHolder {
@@ -17,9 +18,9 @@ class ComboRecycleViewAdapter(list: List<ComboRanking>) : RecyclerView.Adapter<R
 
     override fun onBindViewHolder(holder: RankingViewHolder, position: Int) {
         val rank = list.get(position).rank
-        val combo = list.get(position).combo_count
+        val distance = list.get(position).distance
         holder.rankView.text = "$rank 位"
-        holder.paramView.text = "$combo Combo"
+        holder.paramView.text = "$distance km"
         holder.userNameView.text = list.get(position).user_name
     }
 

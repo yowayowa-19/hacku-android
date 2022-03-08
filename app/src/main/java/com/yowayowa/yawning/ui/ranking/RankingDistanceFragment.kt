@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.yowayowa.yawning.databinding.FragmentRankingDistanceBinding
 
 class RankingDistanceFragment : Fragment() {
@@ -29,8 +30,10 @@ class RankingDistanceFragment : Fragment() {
         _binding = FragmentRankingDistanceBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        rankingViewModel.getComboRankings().observe(viewLifecycleOwner, Observer {
-            println(it[1])
+        rankingViewModel.getDistanceRankings().observe(viewLifecycleOwner, Observer {
+            binding.recyclerView.setHasFixedSize(true)
+            binding.recyclerView.layoutManager = LinearLayoutManager(context)
+            binding.recyclerView.adapter = DistanceRecycleViewAdapter(it)
         })
         return root
     }
