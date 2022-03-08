@@ -1,0 +1,33 @@
+name: Android CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    # The following generates a debug APK
+    - name: Build with Gradle
+      run: ./gradlew assembleDebug
+    # The following is running unit tests
+    - name: Unit Test
+      run: ./gradlew test
+    # The following is uploading debug apk to the deploygate
+    - name: Distribute App
+      run: |
+       curl \
+        -H "Authorization: token ${{secrets.DEPLOYGATE_API_KEY}}" \
+        -F "file=@app/build/outputs/apk/debug/app-debug.apk" \
+        -F "message=Any message" \
+        "https://deploygate.com/api/users/${{secrets.DEPLOYGATE_USER}}/apps"
