@@ -1,5 +1,6 @@
 package com.yowayowa.yawning
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         binding.toolbar.inflateMenu(R.menu.top_nav_menu)
         binding.toolbar.setOnMenuItemClickListener{
             when(it.itemId){
-                R.id.navigation_settings -> println("R.id.navigation_settings was clicked.")
+                R.id.navigation_settings -> startActivity(Intent(this,SettingsActivity::class.java))
             }
             true
         }
