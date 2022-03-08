@@ -16,6 +16,7 @@ class TabPagerAdapter(fragment:Fragment) : FragmentStateAdapter(fragment) {
         return when(position){
             0 -> RankingComboFragment()
             1 -> RankingDistanceFragment()
+            2 -> RankingRegionFragment()
             else -> NotificationsFragment()
         }
     }
