@@ -15,7 +15,7 @@
         android:id="@+id/navigation_dashboard"
         android:name="com.yowayowa.yawning.ui.ranking.RankingFragment"
         android:label="@string/title_ranking"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_ranking" />
 
     <fragment
         android:id="@+id/navigation_notifications"
