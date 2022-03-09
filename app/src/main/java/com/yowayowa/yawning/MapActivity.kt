@@ -31,9 +31,11 @@ class MapActivity : AppCompatActivity() {
         initMap()
         pastPoints.add(GeoPoint(42.0047,140.5936))
         pastPoints.add(GeoPoint(43.0047,143.0936))
-        drawPastPointsWithLine(binding.map)
-        drawConnectLineResentPastPointAndMyFirstPoint(binding.map)
-        drawMyPointsWithLine(binding.map)
+        drawAllPointsAndLines(binding.map)
+        binding.textView.setOnClickListener{
+            myPoints.add(GeoPoint(35.0047,137.0936))
+            drawAllPointsAndLines(binding.map)
+        }
     }
 
     private fun initMap(){
@@ -48,6 +50,12 @@ class MapActivity : AppCompatActivity() {
         mapController.setZoom(9.0)
         mapController.setCenter(jpZeroPoint)
         myPoints.add(jpZeroPoint)
+    }
+    private fun drawAllPointsAndLines(map:MapView){
+        map.overlays.clear()
+        drawPastPointsWithLine(map)
+        drawConnectLineResentPastPointAndMyFirstPoint(map)
+        drawMyPointsWithLine(map)
     }
     private fun drawPastPointsWithLine(map: MapView){
         if(pastPoints.isEmpty()) return
