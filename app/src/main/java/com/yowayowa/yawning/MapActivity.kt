@@ -32,6 +32,8 @@ class MapActivity : AppCompatActivity() {
         pastPoints.add(GeoPoint(42.0047,140.5936))
         pastPoints.add(GeoPoint(43.0047,143.0936))
         drawPastPointsWithLine(binding.map)
+        drawConnectLineResentPastPointAndMyFirstPoint(binding.map)
+        drawMyPointsWithLine(binding.map)
     }
 
     private fun initMap(){
@@ -45,18 +47,7 @@ class MapActivity : AppCompatActivity() {
         val mapController = binding.map.controller
         mapController.setZoom(9.0)
         mapController.setCenter(jpZeroPoint)
-        addMarker(map, jpZeroPoint, Color.RED)
         myPoints.add(jpZeroPoint)
-    }
-    private fun addMarker(map:MapView ,geoPoint: GeoPoint,color:Int){
-        val marker = Marker(map)
-        marker.position = geoPoint
-        val icon = ResourcesCompat.getDrawable(resources,R.drawable.ic_baseline_adjust_24,null)
-        icon?.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(color,
-            BlendModeCompat.SRC_ATOP)
-        marker.icon = icon
-        marker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_CENTER)
-        map.overlays.add(marker)
     }
     private fun drawPastPointsWithLine(map: MapView){
         if(pastPoints.isEmpty()) return
@@ -68,13 +59,33 @@ class MapActivity : AppCompatActivity() {
         line.setPoints(pastPoints)
         line.outlinePaint.color = Color.BLUE
         map.overlays.add(line)
-        connectResentPastPointAndMyFirstPoint(map)
     }
-    private fun connectResentPastPointAndMyFirstPoint(map: MapView){
+    private fun drawConnectLineResentPastPointAndMyFirstPoint(map: MapView){
         val line = Polyline()
         line.setPoints(listOf(pastPoints[pastPoints.size-1],myPoints[0]))
         line.outlinePaint.color = Color.BLUE
         map.overlays.add(line)
+    }
+    private fun drawMyPointsWithLine(map: MapView){
+        if(myPoints.isEmpty()) return
+
+        val line = Polyline()
+        myPoints.forEach{
+            addMarker(map,it,Color.RED)
+        }
+        line.setPoints(myPoints)
+        line.outlinePaint.color = Color.RED
+        map.overlays.add(line)
+    }
+    private fun addMarker(map:MapView ,geoPoint: GeoPoint,color:Int){
+        val marker = Marker(map)
+        marker.position = geoPoint
+        val icon = ResourcesCompat.getDrawable(resources,R.drawable.ic_baseline_adjust_24,null)
+        icon?.colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(color,
+            BlendModeCompat.SRC_ATOP)
+        marker.icon = icon
+        marker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_CENTER)
+        map.overlays.add(marker)
     }
 }
 
