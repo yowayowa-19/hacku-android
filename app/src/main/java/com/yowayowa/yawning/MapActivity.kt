@@ -3,6 +3,7 @@ package com.yowayowa.yawning
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
@@ -17,39 +18,41 @@ import org.osmdroid.views.overlay.Polyline
 
 
 class MapActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMapBinding
     private lateinit var pastPoints : MutableList<GeoPoint>
     private lateinit var myPoints : MutableList<GeoPoint>
     private val jpZeroPoint = GeoPoint(36.0047,137.5936)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMapBinding.inflate(layoutInflater)
+        val binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
         pastPoints = mutableListOf()
         myPoints = mutableListOf()
-        initMap()
+        initMap(binding.map)
         pastPoints.add(GeoPoint(42.0047,140.5936))
         pastPoints.add(GeoPoint(43.0047,143.0936))
-        drawAllPointsAndLines(binding.map)
+        update(binding.map,binding.comboTextView)
         binding.textView.setOnClickListener{
             myPoints.add(GeoPoint(35.0047,137.0936))
-            drawAllPointsAndLines(binding.map)
+            update(binding.map,binding.comboTextView)
         }
     }
 
-    private fun initMap(){
+    private fun initMap(map:MapView){
         Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
-        val map = binding.map
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.minZoomLevel = 3.0
         map.maxZoomLevel = 15.0
         map.setMultiTouchControls(true)//マップの2本指でのピンチアウト
         map.setLayerType(View.LAYER_TYPE_SOFTWARE,null)
-        val mapController = binding.map.controller
+        val mapController = map.controller
         mapController.setZoom(9.0)
         mapController.setCenter(jpZeroPoint)
         myPoints.add(jpZeroPoint)
+    }
+    private fun update(map: MapView, comboTextView: TextView){
+        drawAllPointsAndLines(map)
+        comboTextView.text = "${myPoints.size} Combo!"
     }
     private fun drawAllPointsAndLines(map:MapView){
         map.overlays.clear()
