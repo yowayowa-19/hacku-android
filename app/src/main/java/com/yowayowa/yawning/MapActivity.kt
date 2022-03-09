@@ -2,7 +2,10 @@ package com.yowayowa.yawning
 
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
@@ -14,23 +17,25 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
-import org.osmdroid.views.MapView.OnFirstLayoutListener
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
+import java.lang.String
+import java.util.*
 import kotlin.math.abs
 
 
 class MapActivity : AppCompatActivity() {
+    private lateinit var progressBar:ProgressBar
     private lateinit var pastPoints : MutableList<GeoPoint>
     private lateinit var myPoints : MutableList<GeoPoint>
     private val jpZeroPoint = GeoPoint(36.0047,137.5936)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
         pastPoints = mutableListOf()
         myPoints = mutableListOf()
+        progressBar = binding.progressBar
         initMap(binding.map)
         pastPoints.add(GeoPoint(42.0047,140.5936))
         pastPoints.add(GeoPoint(43.0047,143.0936))
@@ -55,8 +60,9 @@ class MapActivity : AppCompatActivity() {
         mapController.setCenter(jpZeroPoint)
         myPoints.add(jpZeroPoint)
     }
-    private fun update(map: MapView, comboTextView: TextView){
+    private fun update(map: MapView ,comboTextView: TextView){
         drawAllPointsAndLines(map)
+        drawProgressBar()
         val area = getArea()
         map.zoomToBoundingBox(area,true)
         comboTextView.text = "${myPoints.size} Combo!"
@@ -95,6 +101,11 @@ class MapActivity : AppCompatActivity() {
         line.outlinePaint.color = Color.RED
         map.overlays.add(line)
     }
+    private fun drawProgressBar(){
+        val timer = Timer()
+        val timerTask = DegreeProgressTimerTask()
+        timer.schedule(timerTask,0,100)
+    }
     private fun addMarker(map:MapView ,geoPoint: GeoPoint,color:Int){
         val marker = Marker(map)
         marker.position = geoPoint
@@ -131,5 +142,13 @@ class MapActivity : AppCompatActivity() {
         val abs2 = (abs(east) - abs(west))/5
         return BoundingBox(north+abs1, east+abs2, south-abs1, west-abs2)
     }
-}
 
+    inner class DegreeProgressTimerTask : TimerTask() {
+        override fun run() {
+            val handler = Handler(Looper.getMainLooper())
+            handler.post(Runnable {
+                progressBar.progress -= 2
+            })
+        }
+    }
+}
