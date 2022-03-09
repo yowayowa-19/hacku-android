@@ -11,10 +11,13 @@ import androidx.core.graphics.BlendModeCompat
 import com.yowayowa.yawning.databinding.ActivityMapBinding
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.MapView.OnFirstLayoutListener
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
+import kotlin.math.abs
 
 
 class MapActivity : AppCompatActivity() {
@@ -31,7 +34,9 @@ class MapActivity : AppCompatActivity() {
         initMap(binding.map)
         pastPoints.add(GeoPoint(42.0047,140.5936))
         pastPoints.add(GeoPoint(43.0047,143.0936))
-        update(binding.map,binding.comboTextView)
+        binding.map.addOnFirstLayoutListener{ view: View, i: Int, i1: Int, i2: Int, i3: Int ->
+            update(binding.map,binding.comboTextView)
+        }
         binding.textView.setOnClickListener{
             myPoints.add(GeoPoint(35.0047,137.0936))
             update(binding.map,binding.comboTextView)
@@ -52,6 +57,8 @@ class MapActivity : AppCompatActivity() {
     }
     private fun update(map: MapView, comboTextView: TextView){
         drawAllPointsAndLines(map)
+        val area = getArea()
+        map.zoomToBoundingBox(area,true)
         comboTextView.text = "${myPoints.size} Combo!"
     }
     private fun drawAllPointsAndLines(map:MapView){
@@ -97,6 +104,32 @@ class MapActivity : AppCompatActivity() {
         marker.icon = icon
         marker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_CENTER)
         map.overlays.add(marker)
+    }
+    private fun getArea() : BoundingBox {
+        var north : Double = Double.MIN_VALUE
+        var south : Double = Double.MAX_VALUE
+        var east : Double = Double.MIN_VALUE
+        var west : Double = Double.MAX_VALUE
+        pastPoints.forEach{
+            val latitude = it.latitude
+            val longitude = it.longitude
+            north = java.lang.Double.max(latitude, north)
+            south = java.lang.Double.min(latitude, south)
+            west = java.lang.Double.min(longitude, west)
+            east = java.lang.Double.max(longitude, east)
+        }
+        myPoints.forEach{
+            val latitude = it.latitude
+            val longitude = it.longitude
+            north = java.lang.Double.max(latitude, north)
+            south = java.lang.Double.min(latitude, south)
+            west = java.lang.Double.min(longitude, west)
+            east = java.lang.Double.max(longitude, east)
+        }
+        println("n:$north e:$east s:$south w: $west")
+        val abs1 = (abs(north) - abs(south))/5
+        val abs2 = (abs(east) - abs(west))/5
+        return BoundingBox(north+abs1, east+abs2, south-abs1, west-abs2)
     }
 }
 
