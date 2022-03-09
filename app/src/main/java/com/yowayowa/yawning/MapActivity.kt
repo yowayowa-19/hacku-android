@@ -17,7 +17,10 @@ class MapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //osmdroid
+        initMap()
+    }
+
+    private fun initMap(){
         Configuration.getInstance().userAgentValue = BuildConfig.APPLICATION_ID
         val map = binding.map
         map.setTileSource(TileSourceFactory.MAPNIK)
