@@ -59,13 +59,14 @@ class MapActivity : AppCompatActivity() {
         mapController.setZoom(9.0)
         mapController.setCenter(jpZeroPoint)
         myPoints.add(jpZeroPoint)
+        startDegreeProgressBar()
     }
     private fun update(map: MapView ,comboTextView: TextView){
         drawAllPointsAndLines(map)
-        drawProgressBar()
         val area = getArea()
         map.zoomToBoundingBox(area,true)
         comboTextView.text = "${myPoints.size} Combo!"
+        progressBar.progress = 100
     }
     private fun drawAllPointsAndLines(map:MapView){
         map.overlays.clear()
@@ -101,7 +102,7 @@ class MapActivity : AppCompatActivity() {
         line.outlinePaint.color = Color.RED
         map.overlays.add(line)
     }
-    private fun drawProgressBar(){
+    private fun startDegreeProgressBar(){
         val timer = Timer()
         val timerTask = DegreeProgressTimerTask()
         timer.schedule(timerTask,0,100)
