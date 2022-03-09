@@ -13,17 +13,25 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polyline
 
 
 class MapActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMapBinding
+    private lateinit var pastPoints : MutableList<GeoPoint>
+    private lateinit var myPoints : MutableList<GeoPoint>
     private val jpZeroPoint = GeoPoint(36.0047,137.5936)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        pastPoints = mutableListOf()
+        myPoints = mutableListOf()
         initMap()
+        pastPoints.add(GeoPoint(42.0047,140.5936))
+        pastPoints.add(GeoPoint(43.0047,143.0936))
+        drawPastPointsWithLine(binding.map)
     }
 
     private fun initMap(){
@@ -37,7 +45,8 @@ class MapActivity : AppCompatActivity() {
         val mapController = binding.map.controller
         mapController.setZoom(9.0)
         mapController.setCenter(jpZeroPoint)
-        addMarker(map,jpZeroPoint, Color.BLUE)
+        addMarker(map, jpZeroPoint, Color.RED)
+        myPoints.add(jpZeroPoint)
     }
     private fun addMarker(map:MapView ,geoPoint: GeoPoint,color:Int){
         val marker = Marker(map)
@@ -48,6 +57,24 @@ class MapActivity : AppCompatActivity() {
         marker.icon = icon
         marker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_CENTER)
         map.overlays.add(marker)
+    }
+    private fun drawPastPointsWithLine(map: MapView){
+        if(pastPoints.isEmpty()) return
+
+        val line = Polyline()
+        pastPoints.forEach{
+            addMarker(map,it,Color.BLUE)
+        }
+        line.setPoints(pastPoints)
+        line.outlinePaint.color = Color.BLUE
+        map.overlays.add(line)
+        connectResentPastPointAndMyFirstPoint(map)
+    }
+    private fun connectResentPastPointAndMyFirstPoint(map: MapView){
+        val line = Polyline()
+        line.setPoints(listOf(pastPoints[pastPoints.size-1],myPoints[0]))
+        line.outlinePaint.color = Color.BLUE
+        map.overlays.add(line)
     }
 }
 
