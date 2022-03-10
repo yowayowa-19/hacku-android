@@ -3,8 +3,6 @@ package com.yowayowa.yawning
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.yowayowa.yawning.databinding.ActivityFirstviewBinding
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class FirstViewActivity : AppCompatActivity() {
 
@@ -16,7 +14,8 @@ class FirstViewActivity : AppCompatActivity() {
         binding = ActivityFirstviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.registerButton.setOnClickListener{
-
+            UserRegisterDialogFragment.create().show(supportFragmentManager,
+                UserRegisterDialogFragment::class.simpleName)
         }
     }
 }
