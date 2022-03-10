@@ -50,6 +50,13 @@ class HttpClient {
             null
         }
     }
+    /**
+     * コンボが成立したかをfetchする。AkubiResponseのList<Akubi>が空だった場合コンボ非成立。
+     *
+     * @args userID 自分のuserID
+     * @args last_yawned_at
+     * @return AkubiResponse? あくびれすぽんす～
+     */
     fun combo(userID: Int,last_yawned_at: Date): AkubiResponse?{
         val json = JSONObject()
         json.put("user_id", userID)
