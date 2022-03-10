@@ -1,5 +1,6 @@
 package com.yowayowa.yawning
 
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -11,7 +12,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.preference.PreferenceManager
 import com.yowayowa.yawning.databinding.ActivityMapBinding
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
@@ -37,8 +42,7 @@ class MapActivity : AppCompatActivity() {
         myPoints = mutableListOf()
         progressBar = binding.progressBar
         initMap(binding.map)
-        pastPoints.add(GeoPoint(42.0047,140.5936))
-        pastPoints.add(GeoPoint(43.0047,143.0936))
+        akubi()
         binding.map.addOnFirstLayoutListener{ view: View, i: Int, i1: Int, i2: Int, i3: Int ->
             update(binding.map,binding.comboTextView)
         }
@@ -60,6 +64,34 @@ class MapActivity : AppCompatActivity() {
         mapController.setCenter(jpZeroPoint)
         myPoints.add(jpZeroPoint)
         startDegreeProgressBar()
+    }
+    private fun akubi(){
+        /*
+        val pref : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        GlobalScope.launch {
+            val response = HttpClient().akubi(
+                pref.getInt("userID",0),
+                Date(),
+                jpZeroPoint.latitude,
+                jpZeroPoint.longitude
+            ) ?: return@launch
+            response.akubis.forEach{
+                pastPoints.add(GeoPoint(it.latitude,it.longitude))
+            }
+        }
+        */
+        val dummy = AkubiResponse(
+            1,
+            1,
+            listOf(
+                Akubi(2,null,43.837055,144.7687054),
+                Akubi(3,null,45.837055,142.7687054)
+            ),
+            null
+        )
+        dummy.akubis.forEach{
+            pastPoints.add(GeoPoint(it.latitude,it.longitude))
+        }
     }
     private fun update(map: MapView ,comboTextView: TextView){
         drawAllPointsAndLines(map)
@@ -86,10 +118,12 @@ class MapActivity : AppCompatActivity() {
         map.overlays.add(line)
     }
     private fun drawConnectLineResentPastPointAndMyFirstPoint(map: MapView){
-        val line = Polyline()
-        line.setPoints(listOf(pastPoints[pastPoints.size-1],myPoints[0]))
-        line.outlinePaint.color = Color.BLUE
-        map.overlays.add(line)
+        if(pastPoints.count() > 0){
+            val line = Polyline()
+            line.setPoints(listOf(pastPoints[pastPoints.size-1],myPoints[0]))
+            line.outlinePaint.color = Color.BLUE
+            map.overlays.add(line)
+        }
     }
     private fun drawMyPointsWithLine(map: MapView){
         if(myPoints.isEmpty()) return
