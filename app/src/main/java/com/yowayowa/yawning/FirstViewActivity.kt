@@ -16,9 +16,7 @@ class FirstViewActivity : AppCompatActivity() {
         binding = ActivityFirstviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.registerButton.setOnClickListener{
-            GlobalScope.launch {
-                println(HttpClient().register("atria","awaawa"))
-            }
+
         }
     }
 }
