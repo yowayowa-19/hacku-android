@@ -18,6 +18,11 @@
             android:title="パスワード"
             android:summary="*********"
             app:iconSpaceReserved="false"/>
+        <PreferenceScreen
+            android:key="logout"
+            android:title="ログアウト"
+            android:summary="現在のアカウントからログアウトします"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 
     <PreferenceCategory android:title="このアプリについて"

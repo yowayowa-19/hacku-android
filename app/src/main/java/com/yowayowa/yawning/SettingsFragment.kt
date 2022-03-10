@@ -1,5 +1,6 @@
 package com.yowayowa.yawning
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceScreen
@@ -9,5 +10,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.preferences, rootKey)
         val versionPreferenceScreen = findPreference<PreferenceScreen>("version")
         versionPreferenceScreen?.summary = BuildConfig.VERSION_NAME
+
+        val logoutPreferenceScreen = findPreference<PreferenceScreen>("logout")
+        logoutPreferenceScreen?.setOnPreferenceClickListener {
+            startActivity(Intent(context,FirstViewActivity::class.java))
+            return@setOnPreferenceClickListener true
+        }
     }
 }
