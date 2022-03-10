@@ -7,6 +7,15 @@ import java.util.*
 
 class HttpClient {
 
+    /**
+     * あくびをする
+     *
+     * @args userID あくびをした人のuserID
+     * @args yawned_at あくびをした時間
+     * @args latitude あくびをした人の緯度
+     * @args logitude あくびをした人の経度
+     * @return AkubiResponse? あくびれすぽんす～
+     */
     fun akubi(userID:Int, yawned_at: Date, latitude:Double, longitude:Double) : AkubiResponse?{
         val json = JSONObject()
         json.put("user_id", userID)
