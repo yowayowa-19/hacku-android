@@ -6,15 +6,18 @@
     <PreferenceCategory android:title="一般"
         app:iconSpaceReserved="false">
         <PreferenceScreen
+            android:key="userName"
             android:title="ユーザーネーム"
             android:dialogTitle="ユーザーネーム"
             android:summary="username"
             app:iconSpaceReserved="false"/>
         <PreferenceScreen
+            android:key="userID"
             android:title="ユーザーID"
             android:summary="12"
             app:iconSpaceReserved="false"/>
         <PreferenceScreen
+            android:key="password"
             android:title="パスワード"
             android:summary="*********"
             app:iconSpaceReserved="false"/>
