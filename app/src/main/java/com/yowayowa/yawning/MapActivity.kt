@@ -66,6 +66,7 @@ class MapActivity : AppCompatActivity() {
         val area = getArea()
         map.zoomToBoundingBox(area,true)
         comboTextView.text = "${myPoints.size} Combo!"
+        VibrationManager(this).singleVibrate()
         progressBar.progress = 100
     }
     private fun drawAllPointsAndLines(map:MapView){
