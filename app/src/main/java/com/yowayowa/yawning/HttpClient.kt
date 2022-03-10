@@ -1,12 +1,15 @@
 package com.yowayowa.yawning
 
+import android.annotation.SuppressLint
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import org.json.JSONObject
+import java.text.SimpleDateFormat
 import java.util.*
 
 class HttpClient {
-
+    @SuppressLint("SimpleDateFormat")
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     /**
      * あくびをする
      *
@@ -19,11 +22,40 @@ class HttpClient {
     fun akubi(userID:Int, yawned_at: Date, latitude:Double, longitude:Double) : AkubiResponse?{
         val json = JSONObject()
         json.put("user_id", userID)
-        json.put("yawned_at", yawned_at)
+        json.put("yawned_at", sdf.format(yawned_at))
         json.put("latitude", latitude)
         json.put("longitude", longitude)
         val request = OkHttp.buildRequestBody(json.toString(),"application/json; charset=utf-8".toMediaType())
         val rawResponse = HttpClient().post("http://133.242.232.245:8000/akubi",request)
+        return try{
+            val response = JSONObject(rawResponse)
+            val akubiList = mutableListOf<Akubi>()
+            val akubis = response.getJSONArray("akubis")
+            repeat(akubis.length()){
+                val target = akubis.getJSONObject(it)
+                val userId = target.getInt("user_id")
+                val yawnedAt = target.getString("yawned_at")
+                val lat = target.getDouble("latitude")
+                val long = target.getDouble("longitude")
+                akubiList.add(Akubi(userId,yawnedAt,lat,long))
+            }
+            AkubiResponse(
+                response.getInt("user_id"),
+                response.getInt("combo_count"),
+                akubiList,
+                response.getString("last_yawned_at")
+            )
+        }catch (e:Exception){
+            println("akubi_error : ${e.message}")
+            null
+        }
+    }
+    fun combo(userID: Int,last_yawned_at: Date): AkubiResponse?{
+        val json = JSONObject()
+        json.put("user_id", userID)
+        json.put("last_yawned_at", sdf.format(last_yawned_at))
+        val request = OkHttp.buildRequestBody(json.toString(),"application/json; charset=utf-8".toMediaType())
+        val rawResponse = HttpClient().post("http://133.242.232.245:8000/combo",request)
         return try{
             val response = JSONObject(rawResponse)
             val akubiList = mutableListOf<Akubi>()
