@@ -19,7 +19,7 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
-import java.lang.String
+import java.lang.Integer.min
 import java.util.*
 import kotlin.math.abs
 
@@ -66,7 +66,7 @@ class MapActivity : AppCompatActivity() {
         val area = getArea()
         map.zoomToBoundingBox(area,true)
         comboTextView.text = "${myPoints.size} Combo!"
-        VibrationManager(this).singleVibrate()
+        VibrationManager(this).singleVibrates(min(myPoints.size,10))
         progressBar.progress = 100
     }
     private fun drawAllPointsAndLines(map:MapView){
