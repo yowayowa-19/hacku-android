@@ -12,11 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.preference.PreferenceManager
 import com.yowayowa.yawning.databinding.ActivityMapBinding
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
@@ -24,7 +22,8 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
-import java.lang.String
+import java.lang.Runnable
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
 
@@ -33,6 +32,7 @@ class MapActivity : AppCompatActivity() {
     private lateinit var progressBar:ProgressBar
     private lateinit var pastPoints : MutableList<GeoPoint>
     private lateinit var myPoints : MutableList<GeoPoint>
+    private var lastYawnedAt: String? = null
     private val jpZeroPoint = GeoPoint(36.0047,137.5936)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,13 +42,13 @@ class MapActivity : AppCompatActivity() {
         myPoints = mutableListOf()
         progressBar = binding.progressBar
         initMap(binding.map)
-        akubi()
         binding.map.addOnFirstLayoutListener{ view: View, i: Int, i1: Int, i2: Int, i3: Int ->
             update(binding.map,binding.comboTextView)
         }
+        akubi(binding.map,binding.comboTextView)
         binding.textView.setOnClickListener{
             myPoints.add(GeoPoint(35.0047,137.0936))
-            update(binding.map,binding.comboTextView)
+            combo(binding.map,binding.comboTextView)
         }
     }
 
@@ -65,24 +65,58 @@ class MapActivity : AppCompatActivity() {
         myPoints.add(jpZeroPoint)
         startDegreeProgressBar()
     }
-    private fun akubi(){
+    private fun akubi(map: MapView ,comboTextView: TextView){
         val pref : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         GlobalScope.launch {
-            val response = HttpClient().akubi(
-                pref.getInt("userID",0),
-                Date(),
-                jpZeroPoint.latitude,
-                jpZeroPoint.longitude
-            ) ?: return@launch
-            println("AkubiResponse--------------")
-            println("comboCount : ${response.comboCount}")
-            println("akubis : ")
-            response.akubis.forEach{
-                println("[userid : ${it.user_id},yawned_at : ${it.yawned_at},lat : ${it.latitude},long : ${it.longitude}")
-                pastPoints.add(GeoPoint(it.latitude,it.longitude))
+            val deferred = async(Dispatchers.IO){
+                HttpClient().akubi(
+                    pref.getInt("userID",0),
+                    Date(),
+                    jpZeroPoint.latitude,
+                    jpZeroPoint.longitude
+                ) ?: throw Exception()
             }
-            println("last_yawned_at : ${response.lastYawnedAt}")
-            println("AkubiResponseEND-----------")
+            withContext(Dispatchers.Main){
+                val response = deferred.await()
+
+                println("[/AKUBI/]AkubiResponse--------------")
+                println("comboCount : ${response.comboCount}")
+                println("akubis : ")
+                response.akubis.forEach{
+                    println("[userid : ${it.user_id},yawned_at : ${it.yawned_at},lat : ${it.latitude},long : ${it.longitude}")
+                    pastPoints.add(GeoPoint(it.latitude,it.longitude))
+                }
+                lastYawnedAt = response.lastYawnedAt
+                println("last_yawned_at : ${response.lastYawnedAt}")
+                println("AkubiResponseEND-----------")
+                update(map,comboTextView)
+            }
+        }
+    }
+    private fun combo(map: MapView ,comboTextView: TextView){
+        val pref : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        GlobalScope.launch {
+            val deferred = async(Dispatchers.IO){
+                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+                HttpClient().combo(
+                    pref.getInt("userID",0),
+                    sdf.parse(lastYawnedAt)?:null
+                ) ?: throw Exception()
+            }
+            withContext(Dispatchers.Main){
+                val response = deferred.await()
+
+                println("[/COMBO/]AkubiResponse--------------")
+                println("comboCount : ${response.comboCount}")
+                println("akubis : ")
+                response.akubis.forEach{
+                    println("[userid : ${it.user_id},yawned_at : ${it.yawned_at},lat : ${it.latitude},long : ${it.longitude}")
+                    myPoints.add(GeoPoint(it.latitude,it.longitude))
+                }
+                println("last_yawned_at : ${response.lastYawnedAt}")
+                println("AkubiResponseEND-----------")
+                update(map,comboTextView)
+            }
         }
     }
     private fun update(map: MapView ,comboTextView: TextView){

@@ -19,16 +19,16 @@ class HttpClient {
      * @args logitude あくびをした人の経度
      * @return AkubiResponse? あくびれすぽんす～
      */
-    fun akubi(userID:Int, yawned_at: Date, latitude:Double, longitude:Double) : AkubiResponse?{
+    fun akubi(userID:Int, yawned_at: Date?, latitude:Double, longitude:Double) : AkubiResponse?{
         val json = JSONObject()
         json.put("user_id", userID)
-        json.put("yawned_at", sdf.format(yawned_at))
+        json.put("yawned_at", sdf.format(yawned_at?:""))
         json.put("latitude", latitude)
         json.put("longitude", longitude)
         val request = OkHttp.buildRequestBody(json.toString(),"application/json; charset=utf-8".toMediaType())
         val rawResponse = HttpClient().post("http://133.242.232.245:8000/akubi/",request)
         return try{
-            val response = JSONObject(rawResponse)
+            val response = JSONObject(rawResponse?:throw java.lang.Exception())
             val akubiList = mutableListOf<Akubi>()
             val akubis = response.getJSONArray("akubis")
             repeat(akubis.length()){
@@ -57,14 +57,14 @@ class HttpClient {
      * @args last_yawned_at
      * @return AkubiResponse? あくびれすぽんす～
      */
-    fun combo(userID: Int,last_yawned_at: Date): AkubiResponse?{
+    fun combo(userID: Int,last_yawned_at: Date?): AkubiResponse?{
         val json = JSONObject()
         json.put("user_id", userID)
-        json.put("last_yawned_at", sdf.format(last_yawned_at))
+        json.put("last_yawned_at", sdf.format(last_yawned_at?:""))
         val request = OkHttp.buildRequestBody(json.toString(),"application/json; charset=utf-8".toMediaType())
         val rawResponse = HttpClient().post("http://133.242.232.245:8000/combo/",request)
         return try{
-            val response = JSONObject(rawResponse)
+            val response = JSONObject(rawResponse?:throw java.lang.Exception())
             val akubiList = mutableListOf<Akubi>()
             val akubis = response.getJSONArray("akubis")
             repeat(akubis.length()){
