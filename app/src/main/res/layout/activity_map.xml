@@ -34,7 +34,7 @@
         android:rotation="-35"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="100dp"
-        android:textColor="#AA0000"
+        android:textColor="@color/awaiblue"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent" />
