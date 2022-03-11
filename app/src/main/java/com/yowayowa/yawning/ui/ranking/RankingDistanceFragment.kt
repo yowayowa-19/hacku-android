@@ -51,7 +51,7 @@ class RankingDistanceFragment : Fragment() {
         val ft = fragmentManager?.beginTransaction()
         val fragment = RecyclerViewHeaderFragment()
         val bundle = Bundle()
-        bundle.putString("param", "距離")
+        bundle.putString("param", "距離[km]")
         fragment.arguments = bundle
         ft?.replace(R.id.distanceFragmentContainerView, fragment)?.commit()
     }
