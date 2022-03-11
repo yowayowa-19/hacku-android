@@ -2,6 +2,7 @@ package com.yowayowa.yawning
 
 import android.Manifest
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Toast
@@ -11,6 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import androidx.preference.PreferenceManager
 import com.yowayowa.yawning.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(){
@@ -43,6 +45,7 @@ class MainActivity : AppCompatActivity(){
         }
         navView.setupWithNavController(navController)
         checkLocationPermission()
+        firstView()
     }
     private val permissionsRequestCode:Int = 1000;
     //権限周り
@@ -68,15 +71,23 @@ class MainActivity : AppCompatActivity(){
             permissionsRequestCode -> {
                 // If request is cancelled, the result arrays are empty.
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    Toast.makeText(applicationContext,"gpsの使用許可が下りました。位置情報を取得します。",Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(applicationContext,"gpsの使用許可が下りませんでした。位置情報を取得できません。", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext,"gpsの使用許可が下りませんでした。\n位置情報を取得できません。", Toast.LENGTH_SHORT).show()
                 }
                 return
             }
             else ->{
 
             }
+        }
+    }
+
+    fun firstView(){
+        val pref : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        if(pref.getInt("userID",-1) == -1){
+            val intent = Intent(this,FirstViewActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
         }
     }
 }
