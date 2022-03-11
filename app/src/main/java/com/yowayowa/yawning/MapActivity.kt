@@ -1,5 +1,6 @@
 package com.yowayowa.yawning
 
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -11,7 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
+import androidx.preference.PreferenceManager
 import com.yowayowa.yawning.databinding.ActivityMapBinding
+import kotlinx.coroutines.*
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
@@ -19,15 +22,21 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
+import java.lang.Runnable
+import java.text.SimpleDateFormat
 import java.lang.Integer.min
 import java.util.*
 import kotlin.math.abs
 
 
 class MapActivity : AppCompatActivity() {
+    private lateinit var map : MapView
+    private lateinit var comboTextView: TextView
     private lateinit var progressBar:ProgressBar
+    private lateinit var timer:Timer
     private lateinit var pastPoints : MutableList<GeoPoint>
     private lateinit var myPoints : MutableList<GeoPoint>
+    private var lastYawnedAt: String? = null
     private val jpZeroPoint = GeoPoint(36.0047,137.5936)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,17 +44,15 @@ class MapActivity : AppCompatActivity() {
         setContentView(binding.root)
         pastPoints = mutableListOf()
         myPoints = mutableListOf()
+        map = binding.map // TODO:クラスメンバー変数にした影響より、各関数の引数周り変更する
+        comboTextView = binding.comboTextView // TODO:クラスメンバー変数にした影響より、各関数の引数周り変更する
         progressBar = binding.progressBar
-        initMap(binding.map)
-        pastPoints.add(GeoPoint(42.0047,140.5936))
-        pastPoints.add(GeoPoint(43.0047,143.0936))
+
+        initMap(map)
         binding.map.addOnFirstLayoutListener{ view: View, i: Int, i1: Int, i2: Int, i3: Int ->
             update(binding.map,binding.comboTextView)
         }
-        binding.textView.setOnClickListener{
-            myPoints.add(GeoPoint(35.0047,137.0936))
-            update(binding.map,binding.comboTextView)
-        }
+        akubi(binding.map,binding.comboTextView)
     }
 
     private fun initMap(map:MapView){
@@ -60,6 +67,68 @@ class MapActivity : AppCompatActivity() {
         mapController.setCenter(jpZeroPoint)
         myPoints.add(jpZeroPoint)
         startDegreeProgressBar()
+    }
+    private fun akubi(map: MapView ,comboTextView: TextView){
+        val pref : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        GlobalScope.launch {
+            val deferred = async(Dispatchers.IO){
+                HttpClient().akubi(
+                    pref.getInt("userID",0),
+                    Date(),
+                    jpZeroPoint.latitude,
+                    jpZeroPoint.longitude
+                ) ?: throw Exception()
+            }
+            withContext(Dispatchers.Main){
+                val response = deferred.await()
+
+                println("[/AKUBI/]AkubiResponse--------------")
+                println("comboCount : ${response.comboCount}")
+                println("distance : ${response.distance}")
+                println("akubis : ")
+                response.akubis.forEach{
+                    println("[userid : ${it.user_id},yawned_at : ${it.yawned_at},lat : ${it.latitude},long : ${it.longitude}")
+                    pastPoints.add(GeoPoint(it.latitude,it.longitude))
+                }
+                lastYawnedAt = response.lastYawnedAt
+                println("last_yawned_at : ${response.lastYawnedAt}")
+                println("AkubiResponseEND-----------")
+                update(map,comboTextView)
+            }
+        }
+    }
+    private fun combo(map: MapView ,comboTextView: TextView){
+        val pref : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        GlobalScope.launch {
+            val deferred = async(Dispatchers.IO){
+                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+                HttpClient().combo(
+                    pref.getInt("userID",0),
+                    sdf.parse(lastYawnedAt)?:null
+                ) ?: throw Exception()
+            }
+            withContext(Dispatchers.Main){
+                val response = deferred.await()
+
+                println("[/COMBO/]AkubiResponse--------------")
+                println("comboCount : ${response.comboCount}")
+                println("distance : ${response.distance}")
+                println("akubis : ")
+                response.akubis.forEach{
+                    println("[userid : ${it.user_id},yawned_at : ${it.yawned_at},lat : ${it.latitude},long : ${it.longitude}")
+                    myPoints.add(GeoPoint(it.latitude,it.longitude))
+                }
+                lastYawnedAt = response.lastYawnedAt
+                println("last_yawned_at : ${response.lastYawnedAt}")
+                println("AkubiResponseEND-----------")
+                update(map,comboTextView)
+                if(response.akubis.count() == 0){
+                    stopDegreeProgressBar()
+                    ResultDialogFragment.create(myPoints.size,response.distance)
+                        .show(supportFragmentManager,ResultDialogFragment::class.simpleName)
+                }
+            }
+        }
     }
     private fun update(map: MapView ,comboTextView: TextView){
         drawAllPointsAndLines(map)
@@ -87,10 +156,12 @@ class MapActivity : AppCompatActivity() {
         map.overlays.add(line)
     }
     private fun drawConnectLineResentPastPointAndMyFirstPoint(map: MapView){
-        val line = Polyline()
-        line.setPoints(listOf(pastPoints[pastPoints.size-1],myPoints[0]))
-        line.outlinePaint.color = Color.BLUE
-        map.overlays.add(line)
+        if(pastPoints.count() > 0){
+            val line = Polyline()
+            line.setPoints(listOf(pastPoints[pastPoints.size-1],myPoints[0]))
+            line.outlinePaint.color = Color.BLUE
+            map.overlays.add(line)
+        }
     }
     private fun drawMyPointsWithLine(map: MapView){
         if(myPoints.isEmpty()) return
@@ -104,9 +175,12 @@ class MapActivity : AppCompatActivity() {
         map.overlays.add(line)
     }
     private fun startDegreeProgressBar(){
-        val timer = Timer()
+        timer = Timer()
         val timerTask = DegreeProgressTimerTask()
         timer.schedule(timerTask,0,100)
+    }
+    private fun stopDegreeProgressBar(){
+        timer.cancel()
     }
     private fun addMarker(map:MapView ,geoPoint: GeoPoint,color:Int){
         val marker = Marker(map)
@@ -150,6 +224,10 @@ class MapActivity : AppCompatActivity() {
             val handler = Handler(Looper.getMainLooper())
             handler.post(Runnable {
                 progressBar.progress -= 2
+                if(progressBar.progress == 0){
+                    combo(map,comboTextView)
+                    progressBar.progress = 100
+                }
             })
         }
     }
