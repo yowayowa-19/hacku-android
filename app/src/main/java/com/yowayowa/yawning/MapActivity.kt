@@ -32,6 +32,7 @@ class MapActivity : AppCompatActivity() {
     private lateinit var map : MapView
     private lateinit var comboTextView: TextView
     private lateinit var progressBar:ProgressBar
+    private lateinit var timer:Timer
     private lateinit var pastPoints : MutableList<GeoPoint>
     private lateinit var myPoints : MutableList<GeoPoint>
     private var lastYawnedAt: String? = null
@@ -99,7 +100,7 @@ class MapActivity : AppCompatActivity() {
         val pref : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         GlobalScope.launch {
             val deferred = async(Dispatchers.IO){
-                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
+                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
                 HttpClient().combo(
                     pref.getInt("userID",0),
                     sdf.parse(lastYawnedAt)?:null
@@ -121,7 +122,9 @@ class MapActivity : AppCompatActivity() {
                 println("AkubiResponseEND-----------")
                 update(map,comboTextView)
                 if(response.akubis.count() == 0){
-                    ResultDialogFragment.create(response.comboCount,response.distance)
+                    stopDegreeProgressBar()
+                    ResultDialogFragment.create(myPoints.size,response.distance)
+                        .show(supportFragmentManager,ResultDialogFragment::class.simpleName)
                 }
             }
         }
@@ -170,9 +173,12 @@ class MapActivity : AppCompatActivity() {
         map.overlays.add(line)
     }
     private fun startDegreeProgressBar(){
-        val timer = Timer()
+        timer = Timer()
         val timerTask = DegreeProgressTimerTask()
         timer.schedule(timerTask,0,100)
+    }
+    private fun stopDegreeProgressBar(){
+        timer.cancel()
     }
     private fun addMarker(map:MapView ,geoPoint: GeoPoint,color:Int){
         val marker = Marker(map)

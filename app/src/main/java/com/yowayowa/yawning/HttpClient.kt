@@ -9,7 +9,7 @@ import java.util.*
 
 class HttpClient {
     @SuppressLint("SimpleDateFormat")
-    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
     /**
      * あくびをする
      *
