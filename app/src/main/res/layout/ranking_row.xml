@@ -8,12 +8,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
         <TextView
             android:id="@+id/rank"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="24sp"
+            android:textColor="@color/semiblack"
             android:gravity="center"
             tools:text="1位"
             android:layout_weight="1"/>
@@ -21,14 +23,16 @@
             android:id="@+id/param"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/semiblack"
             android:textSize="24sp"
             android:gravity="center"
-            tools:text="23 Combo"
+            tools:text="23"
             android:layout_weight="1"/>
         <TextView
             android:id="@+id/userName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/semiblack"
             android:textSize="24sp"
             android:gravity="center"
             tools:text="Atria"

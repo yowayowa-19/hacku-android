@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.Yawning" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/awaiblue</item>
+        <item name="colorPrimaryVariant">@color/totemoblue</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
@@ -13,12 +13,13 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
-    <style name="Theme.Yawning.actionbar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Yawning.actionbar" parent="Theme.Yawning">
+        <item name="android:background">@color/awaiblue</item>
         <item name="colorControlNormal">@color/white</item>
         <item name="android:textColorPrimary">@color/white</item>
         <item name="colorAccent">@color/white</item>
     </style>
-    <style name="Theme.Yawning.settings" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Yawning.settings" parent="Theme.Yawning">
         <item name="colorSecondary">@color/black</item>
         <item name="android:textColorPrimary">@color/black</item>
         <item name="colorAccent">#0f0f0f</item>
