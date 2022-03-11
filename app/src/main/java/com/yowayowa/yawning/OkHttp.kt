@@ -1,10 +1,8 @@
 package com.yowayowa.yawning
 
-import okhttp3.MediaType
+import okhttp3.*
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
 object OkHttp {
@@ -17,6 +15,13 @@ object OkHttp {
     fun buildRequest(url: String) : Request {
         return Request.Builder()
             .url(url)
+            .build()
+    }
+    fun buildParamRequest(url: String,params:Map<String,String>):Request{
+        val urlBuilder = url.toHttpUrlOrNull()?.newBuilder()
+        params.forEach(urlBuilder!!::addQueryParameter)
+        return Request.Builder()
+            .url(urlBuilder.build())
             .build()
     }
     fun buildPostRequest(url: String, requestBody: RequestBody): Request {

@@ -1,5 +1,21 @@
 package com.yowayowa.yawning
 
+data class Ranking(
+    val contain_user_id:Boolean,
+    val first_id:Int,
+    val first_id_name: String,
+    val end_id:Int,
+    val total_combo_count:Int,
+    val total_distance:Int,
+    val rank:Int,
+)
+
+data class RankingResponse(
+    val combo_ranking:Ranking,
+    val distance_ranking:Ranking,
+)
+
+
 data class ComboRanking (
     val rank:Int,
     val combo_count:Int,

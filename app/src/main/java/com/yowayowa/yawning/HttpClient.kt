@@ -109,10 +109,44 @@ class HttpClient {
             null
         }
     }
+    fun ranking(userID: Int):RankingResponse?{
+        val map = mapOf<String,String>("user_id" to userID.toString())
+        val rawResponse = HttpClient().getAddRequest("http://133.242.232.245:8000/combo/",map)
+        return try{
+            val response = JSONObject(rawResponse?:throw java.lang.Exception())
+            RankingResponse(
+                Ranking(
+                    response.getBoolean("contain_user_id"),
+                    response.getInt("first_id"),
+                    response.getString("first_id_name"),
+                    response.getInt("end_id"),
+                    response.getInt("total_combo_count"),
+                    response.getInt("total_distance"),
+                    response.getInt("rank"),
+                ),
+                Ranking(
+                    response.getBoolean("contain_user_id"),
+                    response.getInt("first_id"),
+                    response.getString("first_id_name"),
+                    response.getInt("end_id"),
+                    response.getInt("total_combo_count"),
+                    response.getInt("total_distance"),
+                    response.getInt("rank"),
+                )
+            )
+        }catch (e:Exception){
+            println("akubi_error : ${e.message}")
+            null
+        }
+    }
 
     //basement
     private fun get(url:String):String?{
         val request = OkHttp.buildRequest(url)
+        return OkHttp.execute(request)
+    }
+    private fun getAddRequest(url:String,params:Map<String,String>):String?{
+        val request = OkHttp.buildParamRequest(url,params)
         return OkHttp.execute(request)
     }
     private fun post(url: String,requestBody: RequestBody): String?{
