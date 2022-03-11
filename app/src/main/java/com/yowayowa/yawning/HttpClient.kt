@@ -42,6 +42,7 @@ class HttpClient {
             AkubiResponse(
                 response.getInt("user_id"),
                 response.getInt("combo_count"),
+                response.getDouble("distance"),
                 akubiList,
                 response.getString("last_yawned_at")
             )
@@ -78,6 +79,7 @@ class HttpClient {
             AkubiResponse(
                 response.getInt("user_id"),
                 response.getInt("combo_count"),
+                response.getDouble("distance"),
                 akubiList,
                 response.getString("last_yawned_at")
             )
