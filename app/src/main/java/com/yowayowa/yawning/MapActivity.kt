@@ -29,6 +29,8 @@ import kotlin.math.abs
 
 
 class MapActivity : AppCompatActivity() {
+    private lateinit var map : MapView
+    private lateinit var comboTextView: TextView
     private lateinit var progressBar:ProgressBar
     private lateinit var pastPoints : MutableList<GeoPoint>
     private lateinit var myPoints : MutableList<GeoPoint>
@@ -40,16 +42,15 @@ class MapActivity : AppCompatActivity() {
         setContentView(binding.root)
         pastPoints = mutableListOf()
         myPoints = mutableListOf()
+        map = binding.map // TODO:クラスメンバー変数にした影響より、各関数の引数周り変更する
+        comboTextView = binding.comboTextView // TODO:クラスメンバー変数にした影響より、各関数の引数周り変更する
         progressBar = binding.progressBar
-        initMap(binding.map)
+
+        initMap(map)
         binding.map.addOnFirstLayoutListener{ view: View, i: Int, i1: Int, i2: Int, i3: Int ->
             update(binding.map,binding.comboTextView)
         }
         akubi(binding.map,binding.comboTextView)
-        binding.textView.setOnClickListener{
-            myPoints.add(GeoPoint(35.0047,137.0936))
-            combo(binding.map,binding.comboTextView)
-        }
     }
 
     private fun initMap(map:MapView){
@@ -81,6 +82,7 @@ class MapActivity : AppCompatActivity() {
 
                 println("[/AKUBI/]AkubiResponse--------------")
                 println("comboCount : ${response.comboCount}")
+                println("distance : ${response.distance}")
                 println("akubis : ")
                 response.akubis.forEach{
                     println("[userid : ${it.user_id},yawned_at : ${it.yawned_at},lat : ${it.latitude},long : ${it.longitude}")
@@ -97,7 +99,7 @@ class MapActivity : AppCompatActivity() {
         val pref : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         GlobalScope.launch {
             val deferred = async(Dispatchers.IO){
-                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+                val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
                 HttpClient().combo(
                     pref.getInt("userID",0),
                     sdf.parse(lastYawnedAt)?:null
@@ -108,14 +110,19 @@ class MapActivity : AppCompatActivity() {
 
                 println("[/COMBO/]AkubiResponse--------------")
                 println("comboCount : ${response.comboCount}")
+                println("distance : ${response.distance}")
                 println("akubis : ")
                 response.akubis.forEach{
                     println("[userid : ${it.user_id},yawned_at : ${it.yawned_at},lat : ${it.latitude},long : ${it.longitude}")
                     myPoints.add(GeoPoint(it.latitude,it.longitude))
                 }
+                lastYawnedAt = response.lastYawnedAt
                 println("last_yawned_at : ${response.lastYawnedAt}")
                 println("AkubiResponseEND-----------")
                 update(map,comboTextView)
+                if(response.akubis.count() == 0){
+                    ResultDialogFragment.create(response.comboCount,response.distance)
+                }
             }
         }
     }
@@ -209,6 +216,10 @@ class MapActivity : AppCompatActivity() {
             val handler = Handler(Looper.getMainLooper())
             handler.post(Runnable {
                 progressBar.progress -= 2
+                if(progressBar.progress == 0){
+                    combo(map,comboTextView)
+                    progressBar.progress = 100
+                }
             })
         }
     }

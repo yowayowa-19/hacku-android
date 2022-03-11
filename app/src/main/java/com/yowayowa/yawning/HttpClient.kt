@@ -9,7 +9,7 @@ import java.util.*
 
 class HttpClient {
     @SuppressLint("SimpleDateFormat")
-    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
     /**
      * あくびをする
      *
@@ -61,6 +61,7 @@ class HttpClient {
     fun combo(userID: Int,last_yawned_at: Date?): AkubiResponse?{
         val json = JSONObject()
         json.put("user_id", userID)
+        println("sdf.format/////////////////////////" + sdf.format(last_yawned_at?:""))
         json.put("last_yawned_at", sdf.format(last_yawned_at?:""))
         val request = OkHttp.buildRequestBody(json.toString(),"application/json; charset=utf-8".toMediaType())
         val rawResponse = HttpClient().post("http://133.242.232.245:8000/combo/",request)
