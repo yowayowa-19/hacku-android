@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.yowayowa.yawning.databinding.FragmentRankingComboBinding
 
@@ -34,6 +35,9 @@ class RankingComboFragment : Fragment() {
             binding.recyclerView.setHasFixedSize(true)
             binding.recyclerView.layoutManager = LinearLayoutManager(context)
             binding.recyclerView.adapter = ComboRecycleViewAdapter(it)
+            binding.recyclerView.addItemDecoration(
+                DividerItemDecoration(requireContext(),DividerItemDecoration.VERTICAL)
+            )
         })
         return root
     }
