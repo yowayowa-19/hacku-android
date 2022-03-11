@@ -1,6 +1,7 @@
 package com.yowayowa.yawning.ui.ranking
 
 import android.graphics.Typeface
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView

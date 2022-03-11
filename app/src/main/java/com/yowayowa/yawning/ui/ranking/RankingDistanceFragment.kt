@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.yowayowa.yawning.R
 import com.yowayowa.yawning.databinding.FragmentRankingDistanceBinding
 
 class RankingDistanceFragment : Fragment() {
@@ -30,7 +31,7 @@ class RankingDistanceFragment : Fragment() {
 
         _binding = FragmentRankingDistanceBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
+        setHeader()
         rankingViewModel.getDistanceRankings().observe(viewLifecycleOwner, Observer {
             binding.recyclerView.setHasFixedSize(true)
             binding.recyclerView.layoutManager = LinearLayoutManager(context)
@@ -45,5 +46,13 @@ class RankingDistanceFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+    private fun setHeader(){
+        val ft = fragmentManager?.beginTransaction()
+        val fragment = RecyclerViewHeaderFragment()
+        val bundle = Bundle()
+        bundle.putString("param", "距離")
+        fragment.arguments = bundle
+        ft?.replace(R.id.distanceFragmentContainerView, fragment)?.commit()
     }
 }
