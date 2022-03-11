@@ -24,6 +24,7 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 import java.lang.Runnable
 import java.text.SimpleDateFormat
+import java.lang.Integer.min
 import java.util.*
 import kotlin.math.abs
 
@@ -134,6 +135,7 @@ class MapActivity : AppCompatActivity() {
         val area = getArea()
         map.zoomToBoundingBox(area,true)
         comboTextView.text = "${myPoints.size} Combo!"
+        VibrationManager(this).singleVibrates(min(myPoints.size,10))
         progressBar.progress = 100
     }
     private fun drawAllPointsAndLines(map:MapView){
