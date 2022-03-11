@@ -1,7 +1,12 @@
 package com.yowayowa.yawning
 
+import android.Manifest
+import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,6 +14,7 @@ import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
@@ -29,19 +35,21 @@ import java.util.*
 import kotlin.math.abs
 
 
-class MapActivity : AppCompatActivity() {
+class MapActivity : AppCompatActivity(), LocationListener {
     private lateinit var map : MapView
     private lateinit var comboTextView: TextView
     private lateinit var progressBar:ProgressBar
     private lateinit var timer:Timer
     private lateinit var pastPoints : MutableList<GeoPoint>
     private lateinit var myPoints : MutableList<GeoPoint>
+    lateinit var mLocationManager : LocationManager
+    private var myLocate : Location? = null
     private var lastYawnedAt: String? = null
-    private val jpZeroPoint = GeoPoint(36.0047,137.5936)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        locationStart()
         pastPoints = mutableListOf()
         myPoints = mutableListOf()
         map = binding.map // TODO:クラスメンバー変数にした影響より、各関数の引数周り変更する
@@ -64,8 +72,8 @@ class MapActivity : AppCompatActivity() {
         map.setLayerType(View.LAYER_TYPE_SOFTWARE,null)
         val mapController = map.controller
         mapController.setZoom(9.0)
-        mapController.setCenter(jpZeroPoint)
-        myPoints.add(jpZeroPoint)
+        mapController.setCenter(GeoPoint(myLocate!!.latitude,myLocate!!.longitude))
+        myPoints.add(GeoPoint(myLocate!!.latitude,myLocate!!.longitude))
         startDegreeProgressBar()
     }
     private fun akubi(map: MapView ,comboTextView: TextView){
@@ -75,8 +83,8 @@ class MapActivity : AppCompatActivity() {
                 HttpClient().akubi(
                     pref.getInt("userID",0),
                     Date(),
-                    jpZeroPoint.latitude,
-                    jpZeroPoint.longitude
+                    myLocate!!.latitude,
+                    myLocate!!.longitude
                 ) ?: throw Exception()
             }
             withContext(Dispatchers.Main){
@@ -230,5 +238,31 @@ class MapActivity : AppCompatActivity() {
                 }
             })
         }
+    }
+
+
+    //位置情報を取得
+    private fun locationStart(){
+        mLocationManager =
+            getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == 0){
+            when {
+                mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) -> {
+                    myLocate = mLocationManager!!.getLastKnownLocation("gps")
+                    mLocationManager.requestLocationUpdates("gps",1000,10F,this)
+                }
+                mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) -> {
+                    myLocate = mLocationManager!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                    mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,1000,10F,this)
+                }
+                else -> {
+                    //GPSが取れなかった時の処理
+                    return
+                }
+            }
+        }
+    }
+    override fun onLocationChanged(location: Location) {
+        myLocate = location
     }
 }
