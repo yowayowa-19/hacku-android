@@ -1,9 +1,13 @@
 package com.yowayowa.yawning
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -20,7 +24,7 @@ import com.yowayowa.yawning.ui.pro.ProViewModel
 import org.altbeacon.beacon.*
 import org.altbeacon.beacon.service.IntentScanStrategyCoordinator
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity(), LocationListener {
 
     private lateinit var binding: ActivityMainBinding
 
@@ -32,6 +36,7 @@ class MainActivity : AppCompatActivity(){
     private var beaconMajorId: Int = 0
     private var beaconMinorId: Int = 0
     private lateinit var mainViewModel: MainViewModel
+    lateinit var mLocationManager : LocationManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +67,7 @@ class MainActivity : AppCompatActivity(){
         checkLocationPermission()
         firstView()
         initBeaconManager()
+        locationStart()
     }
 
     override fun onResume() {
@@ -164,5 +170,30 @@ class MainActivity : AppCompatActivity(){
     private fun putBeaconId(identifier1: Identifier, identifier2: Identifier) {
         beaconMajorId = identifier1.toInt()
         beaconMinorId = identifier2.toInt()
+    }
+
+    //位置情報を取得
+    private fun locationStart(){
+        mLocationManager =
+            getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == 0){
+            when {
+                mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) -> {
+                    mainViewModel.myLocate.value = mLocationManager!!.getLastKnownLocation("gps")
+                    mLocationManager.requestLocationUpdates("gps",1000,10F,this)
+                }
+                mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) -> {
+                    mainViewModel.myLocate.value = mLocationManager!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                    mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,1000,10F,this)
+                }
+                else -> {
+                    //GPSが取れなかった時の処理
+                    return
+                }
+            }
+        }
+    }
+    override fun onLocationChanged(location: Location) {
+        mainViewModel.myLocate.value = location
     }
 }

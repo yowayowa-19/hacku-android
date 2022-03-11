@@ -35,22 +35,19 @@ import java.util.*
 import kotlin.math.abs
 
 
-class MapActivity : AppCompatActivity(), LocationListener {
+class MapActivity : AppCompatActivity() {
     private lateinit var map : MapView
     private lateinit var comboTextView: TextView
     private lateinit var progressBar:ProgressBar
     private lateinit var timer:Timer
     private lateinit var pastPoints : MutableList<GeoPoint>
     private lateinit var myPoints : MutableList<GeoPoint>
-    lateinit var mLocationManager : LocationManager
-    private var myLocate : Location? = null
     private var lastYawnedAt: String? = null
     private var distance: Double = 0.0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        locationStart()
         pastPoints = mutableListOf()
         myPoints = mutableListOf()
         map = binding.map // TODO:クラスメンバー変数にした影響より、各関数の引数周り変更する
@@ -73,8 +70,18 @@ class MapActivity : AppCompatActivity(), LocationListener {
         map.setLayerType(View.LAYER_TYPE_SOFTWARE,null)
         val mapController = map.controller
         mapController.setZoom(9.0)
-        mapController.setCenter(GeoPoint(myLocate!!.latitude,myLocate!!.longitude))
-        myPoints.add(GeoPoint(myLocate!!.latitude,myLocate!!.longitude))
+        mapController.setCenter(
+            GeoPoint(
+                intent.getDoubleExtra("lat",0.0),
+                intent.getDoubleExtra("long",0.0)
+            )
+        )
+        myPoints.add(
+            GeoPoint(
+            intent.getDoubleExtra("lat",0.0),
+            intent.getDoubleExtra("long",0.0)
+            )
+        )
         startDegreeProgressBar()
     }
     private fun akubi(map: MapView ,comboTextView: TextView){
@@ -84,8 +91,8 @@ class MapActivity : AppCompatActivity(), LocationListener {
                 HttpClient().akubi(
                     pref.getInt("userID",0),
                     Date(),
-                    myLocate!!.latitude,
-                    myLocate!!.longitude
+                    intent.getDoubleExtra("lat",0.0),
+                    intent.getDoubleExtra("long",0.0)
                 ) ?: throw Exception()
             }
             withContext(Dispatchers.Main){
@@ -240,31 +247,5 @@ class MapActivity : AppCompatActivity(), LocationListener {
                 }
             })
         }
-    }
-
-
-    //位置情報を取得
-    private fun locationStart(){
-        mLocationManager =
-            getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == 0){
-            when {
-                mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) -> {
-                    myLocate = mLocationManager!!.getLastKnownLocation("gps")
-                    mLocationManager.requestLocationUpdates("gps",1000,10F,this)
-                }
-                mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) -> {
-                    myLocate = mLocationManager!!.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                    mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,1000,10F,this)
-                }
-                else -> {
-                    //GPSが取れなかった時の処理
-                    return
-                }
-            }
-        }
-    }
-    override fun onLocationChanged(location: Location) {
-        myLocate = location
     }
 }
