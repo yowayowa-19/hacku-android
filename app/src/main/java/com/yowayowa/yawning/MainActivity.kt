@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity(){
 
     private lateinit var binding: ActivityMainBinding
 
-    private val uuidString: String = "e9bedbb7-6fe4-489f-920c-8454625ae50e"
+    private val uuidString: String = "01020304-0506-0708-0910-111213141516"
     private val uuid = Identifier.parse(uuidString)
     private lateinit var beaconManager: BeaconManager
     private val IBEACON_FORMAT = "m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"
