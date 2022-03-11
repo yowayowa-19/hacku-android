@@ -11,7 +11,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="累計コンボ数ランキング"
-        android:textSize="24sp"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/semiblack"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

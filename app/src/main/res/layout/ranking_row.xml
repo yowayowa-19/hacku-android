@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:textSize="24sp"
             android:gravity="center"
-            tools:text="23 Combo"
+            tools:text="23"
             android:layout_weight="1"/>
         <TextView
             android:id="@+id/userName"
