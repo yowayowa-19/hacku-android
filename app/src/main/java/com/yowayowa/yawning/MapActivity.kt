@@ -66,7 +66,6 @@ class MapActivity : AppCompatActivity() {
         startDegreeProgressBar()
     }
     private fun akubi(){
-        /*
         val pref : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         GlobalScope.launch {
             val response = HttpClient().akubi(
@@ -75,22 +74,15 @@ class MapActivity : AppCompatActivity() {
                 jpZeroPoint.latitude,
                 jpZeroPoint.longitude
             ) ?: return@launch
+            println("AkubiResponse--------------")
+            println("comboCount : ${response.comboCount}")
+            println("akubis : ")
             response.akubis.forEach{
+                println("[userid : ${it.user_id},yawned_at : ${it.yawned_at},lat : ${it.latitude},long : ${it.longitude}")
                 pastPoints.add(GeoPoint(it.latitude,it.longitude))
             }
-        }
-        */
-        val dummy = AkubiResponse(
-            1,
-            1,
-            listOf(
-                Akubi(2,null,43.837055,144.7687054),
-                Akubi(3,null,45.837055,142.7687054)
-            ),
-            null
-        )
-        dummy.akubis.forEach{
-            pastPoints.add(GeoPoint(it.latitude,it.longitude))
+            println("last_yawned_at : ${response.lastYawnedAt}")
+            println("AkubiResponseEND-----------")
         }
     }
     private fun update(map: MapView ,comboTextView: TextView){
