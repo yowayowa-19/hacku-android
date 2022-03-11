@@ -109,6 +109,12 @@ class HttpClient {
             null
         }
     }
+    /**
+     * ランキング情報を取りに行く
+     *
+     * @args userID 自分ののユーザーID
+     * @return RankingResponse? れすぽんす～
+     */
     fun ranking(userID: Int):RankingResponse?{
         val map = mapOf<String,String>("user_id" to userID.toString())
         val rawResponse = HttpClient().getAddRequest("http://133.242.232.245:8000/combo/",map)
