@@ -155,15 +155,18 @@ class MainActivity : AppCompatActivity(), LocationListener {
         if (nearestBeacon.distance < 100) {
             Log.d(IntentScanStrategyCoordinator.TAG, "InDistance: ${beacons.count()} beacons")
             putBeaconId(nearestBeacon.id2, nearestBeacon.id3)
+            mainViewModel.majorID.value = beaconMajorId
             if(beaconMinorId == 0) //なにもしない
             else if(beaconMinorId == 1) {
                 //あくびした！
-                startActivity(Intent(this, MapActivity::class.java))
+                val intent = Intent(this, MapActivity::class.java)
+                intent.putExtra("lat",mainViewModel.myLocate.value?.latitude)
+                intent.putExtra("long",mainViewModel.myLocate.value?.longitude)
+                startActivity(intent)
                 //2回起動の抑制
                 beaconManager.removeAllMonitorNotifiers()
                 beaconManager.removeAllRangeNotifiers()
             }
-            mainViewModel.majorID.value = beaconMajorId
             println(mainViewModel.majorID.value)
         }
     }
