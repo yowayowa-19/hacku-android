@@ -45,6 +45,7 @@ class MapActivity : AppCompatActivity(), LocationListener {
     lateinit var mLocationManager : LocationManager
     private var myLocate : Location? = null
     private var lastYawnedAt: String? = null
+    private var distance: Double = 0.0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMapBinding.inflate(layoutInflater)
@@ -121,6 +122,7 @@ class MapActivity : AppCompatActivity(), LocationListener {
                 println("[/COMBO/]AkubiResponse--------------")
                 println("comboCount : ${response.comboCount}")
                 println("distance : ${response.distance}")
+                distance += response.distance
                 println("akubis : ")
                 response.akubis.forEach{
                     println("[userid : ${it.user_id},yawned_at : ${it.yawned_at},lat : ${it.latitude},long : ${it.longitude}")
@@ -132,7 +134,7 @@ class MapActivity : AppCompatActivity(), LocationListener {
                 update(map,comboTextView)
                 if(response.akubis.count() == 0){
                     stopDegreeProgressBar()
-                    ResultDialogFragment.create(myPoints.size,response.distance)
+                    ResultDialogFragment.create(myPoints.size,distance)
                         .show(supportFragmentManager,ResultDialogFragment::class.simpleName)
                 }
             }

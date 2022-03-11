@@ -36,7 +36,7 @@ class ResultDialogFragment: DialogFragment() {
         arguments?.let{
             binding.comboTextView.text = it.getInt("ComboKey").toString()
             binding.evaluteTextView.text = evaluteText(it.getInt("ComboKey"))
-            binding.distanceTextView.text = it.getDouble("DistanceKey").toString()
+            binding.distanceTextView.text = "${(Math.round(it.getDouble("DistanceKey")) / 100.0)} km"
         }
         binding.button.setOnClickListener{
             activity?.finish()
