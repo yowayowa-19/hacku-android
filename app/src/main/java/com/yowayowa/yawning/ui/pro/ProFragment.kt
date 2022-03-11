@@ -37,7 +37,7 @@ class ProFragment : Fragment() {
 
         val textView: TextView = binding.textPro
         val majorIdObserver = Observer<Int> {
-            textView.text = it.toString()
+            textView.text = "CO2濃度  ${it}ppm"
         }
         mainViewModel.majorID.observe(viewLifecycleOwner,majorIdObserver)
         return root

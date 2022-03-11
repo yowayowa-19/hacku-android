@@ -9,6 +9,6 @@ class MainViewModel: ViewModel() {
     }
     // 初期値を0に設定
     init{
-        majorID.value = 0
+        majorID.value = 1200
     }
 }
