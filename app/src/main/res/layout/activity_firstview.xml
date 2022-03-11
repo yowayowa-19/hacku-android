@@ -3,49 +3,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/awaiblue">
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="300dp"
         android:layout_height="100dp"
         android:layout_marginTop="124dp"
+        android:src="@drawable/yawning"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:text="ここにいい感じのキャッチフレーズ"
+        android:text="あくびは世界を超える"
+        android:letterSpacing="0.5"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <Button
         android:id="@+id/loginButton"
-        android:layout_width="200dp"
+        android:layout_width="0dp"
         android:layout_height="64dp"
-        android:layout_marginTop="156dp"
+        android:layout_marginTop="200dp"
+        android:backgroundTint="@color/semiwhite"
         android:text="ログイン"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/awaiblue"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_imageview_end"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline_imageview_start"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <Button
         android:id="@+id/registerButton"
-        android:layout_width="200dp"
+        android:layout_width="0dp"
         android:layout_height="64dp"
         android:layout_marginTop="16dp"
+        android:backgroundTint="@color/orange"
         android:text="新規登録"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_imageview_end"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline_imageview_start"
         app:layout_constraintTop_toBottomOf="@+id/loginButton" />
 
     <TextView
@@ -54,9 +60,23 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:text="利用規約"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_imageview_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_imageview_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8" />
 </androidx.constraintlayout.widget.ConstraintLayout>
