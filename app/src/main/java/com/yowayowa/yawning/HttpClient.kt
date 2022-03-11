@@ -26,7 +26,7 @@ class HttpClient {
         json.put("latitude", latitude)
         json.put("longitude", longitude)
         val request = OkHttp.buildRequestBody(json.toString(),"application/json; charset=utf-8".toMediaType())
-        val rawResponse = HttpClient().post("http://133.242.232.245:8000/akubi",request)
+        val rawResponse = HttpClient().post("http://133.242.232.245:8000/akubi/",request)
         return try{
             val response = JSONObject(rawResponse)
             val akubiList = mutableListOf<Akubi>()
@@ -62,7 +62,7 @@ class HttpClient {
         json.put("user_id", userID)
         json.put("last_yawned_at", sdf.format(last_yawned_at))
         val request = OkHttp.buildRequestBody(json.toString(),"application/json; charset=utf-8".toMediaType())
-        val rawResponse = HttpClient().post("http://133.242.232.245:8000/combo",request)
+        val rawResponse = HttpClient().post("http://133.242.232.245:8000/combo/",request)
         return try{
             val response = JSONObject(rawResponse)
             val akubiList = mutableListOf<Akubi>()
@@ -98,7 +98,7 @@ class HttpClient {
         json.put("name", name)
         json.put("password", password)
         val request = OkHttp.buildRequestBody(json.toString(),"application/json; charset=utf-8".toMediaType())
-        val response = HttpClient().post("http://133.242.232.245:8000/register",request)
+        val response = HttpClient().post("http://133.242.232.245:8000/register/",request)
         return try {
             JSONObject(response).getInt("id")
         }catch (e:Exception) {
