@@ -6,13 +6,13 @@ data class Ranking(
     val first_id_name: String,
     val end_id:Int,
     val total_combo_count:Int,
-    val total_distance:Int,
+    val total_distance:Double,
     val rank:Int,
 )
 
 data class RankingResponse(
-    val combo_ranking:Ranking,
-    val distance_ranking:Ranking,
+    val combo_ranking:List<Ranking>,
+    val distance_ranking:List<Ranking>,
 )
 
 

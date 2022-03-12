@@ -117,31 +117,47 @@ class HttpClient {
      */
     fun ranking(userID: Int):RankingResponse?{
         val map = mapOf<String,String>("user_id" to userID.toString())
-        val rawResponse = HttpClient().getAddRequest("http://133.242.232.245:8000/combo/",map)
+        val rawResponse = HttpClient().getAddRequest("http://133.242.232.245:8000/ranking",map)
         return try{
             val response = JSONObject(rawResponse?:throw java.lang.Exception())
-            RankingResponse(
-                Ranking(
-                    response.getBoolean("contain_user_id"),
-                    response.getInt("first_id"),
-                    response.getString("first_id_name"),
-                    response.getInt("end_id"),
-                    response.getInt("total_combo_count"),
-                    response.getInt("total_distance"),
-                    response.getInt("rank"),
-                ),
-                Ranking(
-                    response.getBoolean("contain_user_id"),
-                    response.getInt("first_id"),
-                    response.getString("first_id_name"),
-                    response.getInt("end_id"),
-                    response.getInt("total_combo_count"),
-                    response.getInt("total_distance"),
-                    response.getInt("rank"),
+            val comboRankingList = mutableListOf<Ranking>()
+            val combo_ranking = response.getJSONArray("combo_ranking")
+            repeat(combo_ranking.length()) {
+                val target = combo_ranking.getJSONObject(it)
+                comboRankingList.add(
+                    Ranking(
+                        target.getBoolean("contain_user_id"),
+                        target.getInt("first_id"),
+                        target.getString("first_id_name"),
+                        target.getInt("end_id"),
+                        target.getInt("total_combo_count"),
+                        target.getDouble("total_distance"),
+                        target.getInt("rank"),
+                    )
                 )
+            }
+            val distanceRankingList = mutableListOf<Ranking>()
+            val distance_ranking = response.getJSONArray("distance_ranking")
+            repeat(distance_ranking.length()) {
+                val target = distance_ranking.getJSONObject(it)
+                distanceRankingList.add(
+                    Ranking(
+                        target.getBoolean("contain_user_id"),
+                        target.getInt("first_id"),
+                        target.getString("first_id_name"),
+                        target.getInt("end_id"),
+                        target.getInt("total_combo_count"),
+                        target.getDouble("total_distance"),
+                        target.getInt("rank"),
+                    )
+                )
+            }
+            RankingResponse(
+                comboRankingList,
+                distanceRankingList
             )
         }catch (e:Exception){
-            println("akubi_error : ${e.message}")
+            println("ranking_error : ${e.message}")
             null
         }
     }

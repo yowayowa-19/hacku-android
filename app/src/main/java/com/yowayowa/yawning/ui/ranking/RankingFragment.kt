@@ -1,5 +1,6 @@
 package com.yowayowa.yawning.ui.ranking
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import com.google.android.material.tabs.TabLayoutMediator
 import com.yowayowa.yawning.databinding.FragmentRankingBinding
 
@@ -31,8 +33,11 @@ class RankingFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val pref : SharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         rankingViewModel =
             ViewModelProvider(this).get(RankingViewModel::class.java)
+        rankingViewModel.userID.value = pref.getInt("userID",0)
+        rankingViewModel.getRankingResponse()
 
         _binding = FragmentRankingBinding.inflate(inflater, container, false)
         binding.viewPager.adapter = TabPagerAdapter(this)

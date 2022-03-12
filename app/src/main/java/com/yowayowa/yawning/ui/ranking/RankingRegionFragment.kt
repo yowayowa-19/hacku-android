@@ -29,9 +29,6 @@ class RankingRegionFragment : Fragment() {
         _binding = FragmentRankingRegionBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        rankingViewModel.getComboRankings().observe(viewLifecycleOwner, Observer {
-            println(it[1])
-        })
         return root
     }
 
