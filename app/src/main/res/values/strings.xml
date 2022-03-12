@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Yawning</string>
+    <string name="title_home">あくび</string>
+    <string name="title_ranking">ランキング</string>
+    <string name="title_pro">Pro</string>
+    <string name="title_settings">設定</string>
+</resources>
